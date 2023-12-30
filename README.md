@@ -24,7 +24,7 @@ wget https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/resolve/mai
 ```
 3. Adapt the settings to your environment: `chatui.env` and `llm.env`.
 	* IMPORTANT: Adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
-	* In llm.env you can add more configuration parameters as environment variables, check TODO.
+	* In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
 4. Run docker compose.
 ```
 docker compose up -d
@@ -53,7 +53,7 @@ docker compose down -v
 
 ## Use you local LLM as Open AI replacement
 
-Example using langchain:
+Example using [langchain](https://python.langchain.com/docs/get_started/introduction):
 ```
 from langchain.llms import OpenAI
 
