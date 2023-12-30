@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  llm-backend:
+    image: cuda_simple
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ports:
+      - "8000:8000"
+    env_file:
+      - llm.env
+    volumes:
+      - ./model:/var/model
+
+  chat-ui-db:
+    image: ghcr.io/huggingface/chat-ui-db:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./chatui.env:/app/.env.local
+
