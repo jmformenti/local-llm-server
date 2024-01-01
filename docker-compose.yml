@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   llm-backend:
-    image: cuda_simple
+    image: jmformenti/llama-cpp-python-cuda:v0.2.26
     deploy:
       resources:
         reservations:
@@ -10,6 +10,7 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+    restart: on-failure
     ports:
       - "8000:8000"
     env_file:
@@ -19,6 +20,9 @@ services:
 
   chat-ui-db:
     image: ghcr.io/huggingface/chat-ui-db:latest
+    # patch to prevent errors when starting a new chat (the real problem is that llama-cpp-python does not 
+    # currently support parallel requests, https://github.com/abetlen/llama-cpp-python/pull/951)
+    command: bash -c "sed -i 's/let title = \"\";$/let title = \"No Name\";/' /app/src/routes/conversation/+server.ts && /app/entrypoint.sh"
     ports:
       - "3000:3000"
     volumes:
