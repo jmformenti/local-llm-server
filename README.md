@@ -3,7 +3,7 @@
 Run quickly a LLM in local as backend for development along with a Chat UI.
 
 Main points:
- - Using the [Mistral 8x7b (MoE)](https://mistral.ai/news/mixtral-of-experts/) model, in particular [the variant GGUF](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF) published in HuggingFace.
+ - Using the [Mixtral 8x7B (MoE)](https://mistral.ai/news/mixtral-of-experts/) model, in particular [the instruction variant in GGUF format](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF) published in HuggingFace.
  - API server using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), that you can use it as a replacement for Open AI.
  - [Chat UI from HuggingFace](https://github.com/huggingface/chat-ui).
 
@@ -37,7 +37,7 @@ The API is exposed in: http://localhost:8000
 
 ## Other interesting commands
 
-Common docker composer commands useful in daily execution:
+Common docker compose commands useful in daily execution:
 1. Stop.
 ```
 docker compose stop
@@ -62,3 +62,7 @@ llm = OpenAI(openai_api_base="http://localhost:8000/v1", openai_api_key="dummy")
 print(llm("[INST] Who are you? [/INST]"))
 ```
 Note that the prompt is enclosed by *[INST]* because we are using an instruction model trained this way, check the [model card](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF).
+
+## Limitations
+
+The backend API does not support parallel requests, currently in development [here](https://github.com/abetlen/llama-cpp-python/pull/951).
