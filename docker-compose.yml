@@ -1,15 +1,6 @@
 version: '3.4'
 
-services:
-  llm-backend:
-    image: jmformenti/llama-cpp-python-cuda:v0.2.26
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+x-base-llm-backend: &base_llm_backend
     restart: on-failure
     ports:
       - "8000:8000"
@@ -17,6 +8,30 @@ services:
       - llm.env
     volumes:
       - ./model:/var/model
+    networks:
+      default:
+        aliases:
+          - llm-backend
+
+services:
+  llm-backend-gpu:
+    image: jmformenti/llama-cpp-python-cuda:v0.2.26
+    <<: *base_llm_backend
+    profiles:
+      - gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  llm-backend-cpu:
+    image: ghcr.io/abetlen/llama-cpp-python:v0.2.26
+    <<: *base_llm_backend
+    profiles:
+      - only-cpu
 
   chat-ui-db:
     image: ghcr.io/huggingface/chat-ui-db:latest

@@ -11,9 +11,8 @@ All installed using docker compose.
 
 ## Requirements
 
-* Assumption that you have GPU installed (not tested only with CPU).
 * docker compose (recommended V2).
-* [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed.
+* [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) installed if you have gpu.
 
 ## Install
 
@@ -22,9 +21,18 @@ All installed using docker compose.
 mkdir model
 wget https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/resolve/main/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf?download=true -O ./model/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf
 ```
-3. Adapt the settings to your environment: `chatui.env` and `llm.env`.
-	* IMPORTANT: Adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
-	* In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
+2. Adapt the settings to your environment: `chatui.env` and `llm.env`.
+  * IMPORTANT: If you have gpu, adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
+  * In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
+3. Set your profile depending whether you want to use gpu or only cpu.
+```
+export COMPOSE_PROFILES=gpu
+```
+  or
+```
+export COMPOSE_PROFILES=only-cpu
+```
+  * NOTE: You might want to save this environment variable in your `.bashrc` or `.profile`.
 4. Run docker compose.
 ```
 docker compose up -d
