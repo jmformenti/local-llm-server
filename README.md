@@ -17,26 +17,26 @@ All installed using docker compose.
 ## Install
 
 1. Download the model.
-```
-mkdir model
-wget https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/resolve/main/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf?download=true -O ./model/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf
-```
+   ```
+   mkdir model
+   wget https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/resolve/main/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf?download=true -O ./model/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf
+   ```
 2. Adapt the settings to your environment: `chatui.env` and `llm.env`.
-  * IMPORTANT: If you have gpu, adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
-  * In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
+    * IMPORTANT: If you have gpu, adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
+    * In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
 3. Set your profile depending whether you want to use gpu or only cpu.
-```
-export COMPOSE_PROFILES=gpu
-```
-  or
-```
-export COMPOSE_PROFILES=only-cpu
-```
-  * NOTE: You might want to save this environment variable in your `.bashrc` or `.profile`.
+   * NOTE: You might want to save the following environment variable in your `.bashrc` or `.profile`.
+   ```
+   export COMPOSE_PROFILES=gpu
+   ```
+   or
+   ```
+   export COMPOSE_PROFILES=only-cpu
+   ```
 4. Run docker compose.
-```
-docker compose up -d
-```
+   ```
+   docker compose up -d
+   ```
 
 ## Access to the services
 
@@ -47,17 +47,17 @@ The API is exposed in: http://localhost:8000
 
 Common docker compose commands useful in daily execution:
 1. Stop.
-```
-docker compose stop
-```
+   ```
+   docker compose stop
+   ```
 3. Show logs.
-```
-docker compose logs -f
-```
+   ```
+   docker compose logs -f
+   ```
 4. Remove.
-```
-docker compose down -v
-```
+   ```
+   docker compose down -v
+   ```
 
 ## Use you local LLM as Open AI replacement
 
