@@ -1,22 +1,56 @@
-version: '3.4'
+version: "3.9"
 
-x-base-llm-backend: &base_llm_backend
-    restart: on-failure
+x-base-litellm: &base_litellm
+    build:
+      context: ./litellm
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    env_file:
-      - llm.env
+    restart: unless-stopped
+    environment:
+      - MODEL=$MODEL
+
+x-base-ollama: &base_ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
     volumes:
-      - ./model:/var/model
+      - ollama:/root/.ollama
+    pull_policy: always
+    restart: unless-stopped
     networks:
       default:
         aliases:
-          - llm-backend
+          - ollama
+
+x-base-ollama-webui: &base_ollama_webui
+    image: ghcr.io/ollama-webui/ollama-webui:main
+    ports:
+      - "3000:8080"
+    volumes:
+      - ollama-webui:/app/backend/data
+    pull_policy: always
+    environment:
+      - OLLAMA_API_BASE_URL=http://ollama:11434/api
+    restart: unless-stopped
 
 services:
-  llm-backend-gpu:
-    image: jmformenti/llama-cpp-python-cuda:v0.2.26
-    <<: *base_llm_backend
+  litellm-gpu:
+    <<: *base_litellm    
+    profiles:
+      - gpu
+    depends_on:
+      - ollama-gpu
+
+  litellm-cpu:
+    <<: *base_litellm
+    profiles:
+      - cpu
+    depends_on:
+      - ollama-cpu
+
+  ollama-gpu:
+    <<: *base_ollama
     profiles:
       - gpu
     deploy:
@@ -27,19 +61,25 @@ services:
               count: 1
               capabilities: [gpu]
 
-  llm-backend-cpu:
-    image: ghcr.io/abetlen/llama-cpp-python:v0.2.26
-    <<: *base_llm_backend
+  ollama-cpu:
+    <<: *base_ollama
     profiles:
-      - only-cpu
+      - cpu
 
-  chat-ui-db:
-    image: ghcr.io/huggingface/chat-ui-db:latest
-    # patch to prevent errors when starting a new chat (the real problem is that llama-cpp-python does not 
-    # currently support parallel requests, https://github.com/abetlen/llama-cpp-python/pull/951)
-    command: bash -c "sed -i 's/let title = \"\";$/let title = \"No Name\";/' /app/src/routes/conversation/+server.ts && /app/entrypoint.sh"
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./chatui.env:/app/.env.local
+  ollama-webui-gpu:
+    <<: *base_ollama_webui
+    profiles:
+      - gpu
+    depends_on:
+      - ollama-gpu
 
+  ollama-webui-cpu:
+    <<: *base_ollama_webui
+    profiles:
+      - cpu
+    depends_on:
+      - ollama-cpu
+
+volumes:
+  ollama: {}
+  ollama-webui: {}

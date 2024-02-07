@@ -2,12 +2,9 @@
 
 Run quickly a LLM in local as backend for development along with a Chat UI.
 
-Main points:
- - Using the [Mixtral 8x7B (MoE)](https://mistral.ai/news/mixtral-of-experts/) model, in particular [the instruction variant in GGUF format](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF) published in HuggingFace.
- - API server using [llama-cpp-python](https://github.com/abetlen/llama-cpp-python), that you can use it as a replacement for Open AI.
- - [Chat UI from HuggingFace](https://github.com/huggingface/chat-ui).
+Using [Ollama](https://github.com/ollama/ollama) and [LiteLLM](https://github.com/BerriAI/litellm).
 
-All installed using docker compose.
+All installed via docker compose.
 
 ## Requirements
 
@@ -16,61 +13,43 @@ All installed using docker compose.
 
 ## Install
 
-1. Download the model.
-   ```
-   mkdir model
-   wget https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF/resolve/main/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf?download=true -O ./model/mixtral-8x7b-instruct-v0.1.Q5_K_M.gguf
-   ```
-2. Adapt the settings to your environment: `chatui.env` and `llm.env`.
-    * IMPORTANT: If you have gpu, adapt `N_GPU_LAYERS` parameter to your GPU memory (default 22 layers, assuming 24GB).
-    * In `llm.env` you can add more configuration parameters as environment variables, check [here](https://llama-cpp-python.readthedocs.io/en/latest/server/#server-options-reference).
-3. Set your profile depending whether you want to use gpu or only cpu.
-   * NOTE: You might want to save the following environment variable in your `.bashrc` or `.profile`.
-   ```
-   export COMPOSE_PROFILES=gpu
-   ```
-   or
-   ```
-   export COMPOSE_PROFILES=only-cpu
-   ```
-4. Run docker compose.
-   ```
-   docker compose up -d
-   ```
+1. Configure `.env`.
+  * `COMPOSE_PROFILES`. `gpu` (you need nvidia-container-toolkit installed) or `cpu`.
+  * `MODEL`. One from the [ollama model library](https://ollama.ai/library).
+
+2. Run docker compose.
+  ```
+  docker compose up -d
+  ```
 
 ## Access to the services
 
-After start the services, you can access to the UI: http://localhost:3000
-The API is exposed in: http://localhost:8000
+* UI: http://localhost:3000
+* OpenAI API: http://localhost:8000
 
 ## Other interesting commands
 
 Common docker compose commands useful in daily execution:
 1. Stop.
-   ```
-   docker compose stop
-   ```
+```
+docker compose stop
+```
 3. Show logs.
-   ```
-   docker compose logs -f
-   ```
-4. Remove.
-   ```
-   docker compose down -v
-   ```
-
-## Use you local LLM as Open AI replacement
-
-Example using [langchain](https://python.langchain.com/docs/get_started/introduction):
 ```
-from langchain.llms import OpenAI
-
-llm = OpenAI(openai_api_base="http://localhost:8000/v1", openai_api_key="dummy")
-
-print(llm("[INST] Who are you? [/INST]"))
+docker compose logs -f
 ```
-Note that the prompt is enclosed by *[INST]* because we are using an instruction model trained this way, check the [model card](https://huggingface.co/TheBloke/Mixtral-8x7B-Instruct-v0.1-GGUF).
+4. Remove all.
+```
+docker compose down -v
+```
 
-## Limitations
+## Use your local LLM as Open AI replacement
 
-The backend API does not support parallel requests, currently in development [here](https://github.com/abetlen/llama-cpp-python/pull/951).
+Example using Langchain:
+```
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(openai_api_base="http://localhost:8000", openai_api_key="ignored", model="mixtral", temperature=0.1)
+
+print(llm.invoke("Who are you?"))
+```

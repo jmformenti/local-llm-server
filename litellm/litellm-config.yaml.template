@@ -1,0 +1,5 @@
+model_list: 
+  - model_name: $MODEL_NAME
+    litellm_params:
+      model: ollama/$MODEL
+      api_base: http://ollama:11434
