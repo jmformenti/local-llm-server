@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM ghcr.io/berriai/litellm:main-latest
 
 WORKDIR /app
 
@@ -6,8 +6,6 @@ RUN apt-get update && \
     apt-get install -y gettext jq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN pip install 'litellm[proxy]'
 
 COPY entrypoint.sh /app/entrypoint.sh
 COPY litellm-config.yaml.template /app/litellm-config.yaml.template

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-OLLAMA_API_URL=http://ollama:11434/api
-
 export MODEL_NAME=${MODEL%%:*}
 envsubst < /app/litellm-config.yaml.template > /app/proxy_server_config.yaml
 

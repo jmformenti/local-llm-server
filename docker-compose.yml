@@ -5,7 +5,7 @@ x-base-litellm: &base_litellm
       context: ./litellm
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:4000"
     restart: unless-stopped
     environment:
       - MODEL=$MODEL
