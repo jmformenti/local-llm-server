@@ -15,7 +15,6 @@ All installed via docker compose.
 
 1. Configure `.env`.
   * `COMPOSE_PROFILES`. `gpu` (you need nvidia-container-toolkit installed) or `cpu`.
-  * `MODEL`. One from the [ollama model library](https://ollama.ai/library).
 
 2. Run docker compose.
   ```
@@ -25,12 +24,16 @@ All installed via docker compose.
 ## Access to the services
 
 * UI: http://localhost:3000
-* OpenAI API: http://localhost:8000
+* OpenAI API: http://localhost:11434
 
 ## Other interesting commands
 
 Common docker compose commands useful in daily execution:
-1. Stop.
+1. Download a [ollama model](https://ollama.com/library) from cli:
+```
+docker compose exec ollama-gpu ollama pull <model_name>
+```
+2. Stop.
 ```
 docker compose stop
 ```
@@ -49,7 +52,14 @@ Example using Langchain:
 ```
 from langchain_openai import ChatOpenAI
 
-llm = ChatOpenAI(openai_api_base="http://localhost:8000", openai_api_key="ignored", model="mixtral", temperature=0.1)
+llm = ChatOpenAI(openai_api_base="http://localhost:11434/v1", openai_api_key="ignored", model=<model>)
 
 print(llm.invoke("Who are you?"))
+```
+
+Run it with [uv](https://github.com/astral-sh/uv):
+```
+export MODEL=qwen2.5:0.5b
+docker compose exec ollama-gpu ollama pull $MODEL
+uv run --with langchain[openai] test/simple.py
 ```
