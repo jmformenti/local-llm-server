@@ -1,8 +1,8 @@
 # Run LLM in local for development
 
-Run quickly a LLM in local as backend for development along with a Chat UI.
+Run easily a LLM in local as backend for development along with a Chat UI.
 
-Using [Ollama](https://github.com/ollama/ollama) and [LiteLLM](https://github.com/BerriAI/litellm).
+Using [Ollama](https://github.com/ollama/ollama) and [Open WebUI](https://github.com/open-webui/open-webui).
 
 All installed via docker compose.
 
@@ -23,7 +23,7 @@ All installed via docker compose.
 
 ## Access to the services
 
-* UI: http://localhost:3000
+* UI: http://localhost:3003
 * OpenAI API: http://localhost:11434
 
 ## Other interesting commands
@@ -45,21 +45,12 @@ docker compose logs -f
 ```
 docker compose down -v
 ```
-
-## Use your local LLM as Open AI replacement
-
-Example using Langchain:
+5. Update all the containers.
 ```
-from langchain_openai import ChatOpenAI
-
-llm = ChatOpenAI(openai_api_base="http://localhost:11434/v1", openai_api_key="ignored", model=<model>)
-
-print(llm.invoke("Who are you?"))
+docker compose up --build -d
 ```
 
-Run it with [uv](https://github.com/astral-sh/uv):
-```
-export MODEL=qwen2.5:0.5b
-docker compose exec ollama-gpu ollama pull $MODEL
-uv run --with langchain[openai] test/simple.py
-```
+## Code examples
+
+* [Simple](./test/simple). Using your local LLM as Open AI replacement.
+* [Multi MCP client](./test/mcp_demo). Using a multi MCP client with your local LLM.
